@@ -5,9 +5,16 @@ const DRAW = '*';
 
 const container = document.getElementById('fieldWrapper');
 
+
+
+
+
+
+
 class Field {
     constructor() {
-        this.sign = CROSS;
+        this.sign = ZERO;
+        this.countMove = 0;
         this.field = [
             [EMPTY, EMPTY, EMPTY],
             [EMPTY, EMPTY, EMPTY],
@@ -17,23 +24,45 @@ class Field {
 
     addSign(row, column) {
         if (this.field[row][column] === EMPTY) {
-            this.field[row][column] = this.sign;
             this.sign = this.sign === CROSS ? ZERO : CROSS;
+            this.field[row][column] = this.sign;
+            this.countMove++;
             return true;
         }
         return false;
     }
 
     checkWin() {
-
+        let sign = this.sign;
+        let count3 = 0;
+        let count4 = 0;
+        for (let i = 0; i < 2; i++) {
+            let count1 = 0;
+            let count2 = 0;
+            if (this.field[i][i] === sign){
+                count3++;
+            }
+            if (this.field[2 - i][i] === sign){
+                count4++;
+            }
+            for (let j = 0; j < 2; j++) {
+                if (this.field[i][j] === sign) {
+                    count1++;
+                }
+                if (this.field[j][i] === sign) {
+                    count2++;
+                }
+            }
+            if (count1 === 3 || count2 === 3) {
+                return true;
+            }
+        }
+        return count3 === 3 || count4 === 3;
     }
 }
 
-startGame();
-addResetListener();
-
 function startGame() {
-    field = Field();
+    field = new Field();
     renderGrid(3);
 }
 
@@ -56,9 +85,12 @@ function cellClickHandler(row, col) {
     // Пиши код тут
     console.log(`Clicked on cell: ${row}, ${col}`);
     let result = field.addSign(row, col);
-    if (resut === true) {
-        switch (field.checkWin()) {
-
+    if (result === true) {
+        renderSymbolInCell(field.sign, row, col)
+        if (field.checkWin()) {
+            alert(`${field.sign} win!!!`);
+        } else if (field.countMove === 9) {
+            alert(`Победила дружба`);
         }
     }
 
@@ -119,3 +151,7 @@ function testDraw() {
 function clickOnCell(row, col) {
     findCell(row, col).click();
 }
+
+
+startGame();
+addResetListener();
