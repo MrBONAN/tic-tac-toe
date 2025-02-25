@@ -6,11 +6,6 @@ const DRAW = '*';
 const container = document.getElementById('fieldWrapper');
 
 
-
-
-
-
-
 class Field {
     constructor() {
         this.sign = ZERO;
@@ -36,16 +31,16 @@ class Field {
         let sign = this.sign;
         let count3 = 0;
         let count4 = 0;
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 3; i++) {
             let count1 = 0;
             let count2 = 0;
-            if (this.field[i][i] === sign){
+            if (this.field[i][i] === sign) {
                 count3++;
             }
-            if (this.field[2 - i][i] === sign){
+            if (this.field[2 - i][i] === sign) {
                 count4++;
             }
-            for (let j = 0; j < 2; j++) {
+            for (let j = 0; j < 3; j++) {
                 if (this.field[i][j] === sign) {
                     count1++;
                 }
@@ -58,6 +53,27 @@ class Field {
             }
         }
         return count3 === 3 || count4 === 3;
+    }
+
+    paintWinner() {
+        const sign = this.sign;
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (this.field[i][j] === sign) {
+                    renderSymbolInCell(sign, i, j, 'red');
+                }
+            }
+        }
+    }
+
+    resetField() {
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                this.field[i][j] = EMPTY;
+                renderSymbolInCell(EMPTY, i, j);
+            }
+        }
+        this.countMove = 0;
     }
 }
 
@@ -88,9 +104,17 @@ function cellClickHandler(row, col) {
     if (result === true) {
         renderSymbolInCell(field.sign, row, col)
         if (field.checkWin()) {
-            alert(`${field.sign} win!!!`);
+            field.paintWinner();
+            setTimeout(() => {
+                    alert(`${field.sign} win!!!`);
+                }, 1
+            )
+            ;
         } else if (field.countMove === 9) {
-            alert(`Победила дружба`);
+            setTimeout(() => {
+                    alert(`Победила дружба`);
+                }, 1
+            )
         }
     }
 
@@ -118,6 +142,7 @@ function addResetListener() {
 
 function resetClickHandler() {
     console.log('reset!');
+    field.resetField()
 }
 
 
